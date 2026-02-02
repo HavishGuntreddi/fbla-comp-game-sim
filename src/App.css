@@ -939,9 +939,13 @@ body {
 }
 
 .code-target {
-  color: rgba(255, 255, 255, 0.2);
+  white-space: pre;                 /* keeps spaces & tabs */
+  color: rgba(255, 255, 255, 0.25);
   font-size: 1rem;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;                /* fixes spacing weirness */
+  margin: 0;
+  font-family: 'Space Mono', monospace;
+  line-height: 1.6;
 }
 
 .code-input {
@@ -949,14 +953,20 @@ body {
   top: 0;
   left: 0;
   right: 0;
+
   background: transparent;
   border: none;
+  outline: none;
+
+  white-space: pre;                 /* for tabs */
   color: var(--primary);
   font-family: 'Space Mono', monospace;
   font-size: 1rem;
-  outline: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;          
   caret-color: var(--primary);
+  line-height: 1.6;
+
+  padding: 0;
 }
 
 .code-input.completed {
@@ -1310,4 +1320,4 @@ body {
   .completion-title {
     font-size: 2rem;
   }
-}
+

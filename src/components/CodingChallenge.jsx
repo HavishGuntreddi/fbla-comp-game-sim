@@ -1,22 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 const CodingChallenge = ({ onComplete }) => {
   const codeToType = [
-    'function calculateTotal(items) {',
-    '  return items.reduce((sum, item) => {',
-    '    return sum + item.price;',
-    '  }, 0);',
-    '}'
+    "function calculateTotal(items) {",
+    "   return items.reduce((sum, item) => {",
+    "    return sum + item.price;",
+    "  }, 0);",
+    "}",
   ];
 
   const [currentLine, setCurrentLine] = useState(0);
-  const [userInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState("");
   const [completedLines, setCompletedLines] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(45);
+  const [timeLeft, setTimeLeft] = useState(75);
   const [isComplete, setIsComplete] = useState(false);
   const [errors, setErrors] = useState(0);
   const [showError, setShowError] = useState(false);
   const inputRefs = useRef([]);
+  const getIndent = (line) => line.match(/^\s*/)[0];
 
   useEffect(() => {
     if (timeLeft > 0 && !isComplete) {
@@ -32,6 +33,8 @@ const CodingChallenge = ({ onComplete }) => {
       inputRefs.current[currentLine].focus();
     }
     // Reset error state when moving to a new line
+    const indent = getIndent(codeToType[currentLine]);
+    setUserInput(indent);
     setShowError(false);
   }, [currentLine]);
 
@@ -43,17 +46,17 @@ const CodingChallenge = ({ onComplete }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     const targetLine = codeToType[currentLine];
-    
+
     // Only allow typing if we haven't exceeded the target length
     if (value.length > targetLine.length) {
       return;
     }
-    
+
     setUserInput(value);
-    
+
     // Check if what's typed so far matches the target
     const isCorrectSoFar = targetLine.startsWith(value);
-    
+
     // Only show error if typing wrong characters, not on initial empty state
     if (!isCorrectSoFar && value.length > 0) {
       if (!showError) {
@@ -69,18 +72,18 @@ const CodingChallenge = ({ onComplete }) => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       const targetLine = codeToType[currentLine];
-      
+
       // Check if the trimmed input matches the trimmed target
       if (userInput.trim() === targetLine.trim()) {
         // Correct line completed
         const newCompletedLines = [...completedLines, currentLine];
         setCompletedLines(newCompletedLines);
-        setUserInput(''); // Clear input for next line
+        setUserInput(""); // Clear input for next line
         setShowError(false); // Ensure error state is cleared
-        
+
         if (currentLine === codeToType.length - 1) {
           // All lines complete
           setIsComplete(true);
@@ -97,7 +100,7 @@ const CodingChallenge = ({ onComplete }) => {
         setShowError(true);
         setTimeout(() => {
           setShowError(false);
-          setUserInput('');
+          setUserInput("");
         }, 500);
       }
     }
@@ -106,16 +109,16 @@ const CodingChallenge = ({ onComplete }) => {
   const progress = (completedLines.length / codeToType.length) * 100;
 
   return (
-    <div className="interactive-activity" style={{ borderColor: '#00d9ff' }}>
+    <div className="interactive-activity" style={{ borderColor: "#00d9ff" }}>
       <div className="activity-title">
         <span>⚡ Speed Coding Challenge</span>
-        <span className={`timer ${timeLeft <= 10 ? 'warning' : ''}`}>
+        <span className={`timer ${timeLeft <= 10 ? "warning" : ""}`}>
           {timeLeft}s
         </span>
       </div>
-      
-      <p style={{ marginBottom: '1rem', fontSize: '1.05rem' }}>
-        Type out this JavaScript function as fast and accurately as you can! 
+
+      <p style={{ marginBottom: "1rem", fontSize: "1.05rem" }}>
+        Type out this JavaScript function as fast and accurately as you can!
         Press <strong>Enter</strong> after each line.
       </p>
 
@@ -124,12 +127,12 @@ const CodingChallenge = ({ onComplete }) => {
           <div key={index} className="code-line">
             <span className="line-number">{index + 1}</span>
             <div className="code-content">
-              <div className="code-target">{line}</div>
+              <pre className="code-target">{line}</pre>
               {index === currentLine && !isComplete && (
                 <input
-                  ref={el => inputRefs.current[index] = el}
+                  ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
-                  className={`code-input ${showError ? 'error' : ''}`}
+                  className={`code-input ${showError ? "error" : ""}`}
                   value={userInput}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
@@ -141,9 +144,7 @@ const CodingChallenge = ({ onComplete }) => {
                 />
               )}
               {completedLines.includes(index) && (
-                <div className="code-input completed">
-                  {line}
-                </div>
+                <div className="code-input completed">{line}</div>
               )}
             </div>
           </div>
@@ -154,14 +155,18 @@ const CodingChallenge = ({ onComplete }) => {
         <div className="progress-fill" style={{ width: `${progress}%` }}></div>
       </div>
 
-      <div style={{ 
-        marginTop: '1rem', 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        fontSize: '0.95rem',
-        opacity: 0.8
-      }}>
-        <span>Lines: {completedLines.length}/{codeToType.length}</span>
+      <div
+        style={{
+          marginTop: "1rem",
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: "0.95rem",
+          opacity: 0.8,
+        }}
+      >
+        <span>
+          Lines: {completedLines.length}/{codeToType.length}
+        </span>
         <span>Errors: {errors}</span>
       </div>
 
